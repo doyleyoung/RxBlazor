@@ -1,0 +1,31 @@
+@using System.Reactive.Linq
+@inject ICounterService CounterService
+@inject IMessageService MessageService
+
+<div component="CounterComponent">
+    <p>Current count: @count</p>
+
+    <button class="btn btn-primary" onclick="@CounterService.Increment">Click me</button>
+</div>
+
+@functions {
+
+    int count { get; set; } = 0;
+
+    private IDisposable _subscriber;
+
+    protected override void OnInit() {
+        count = CounterService.count;
+        _subscriber = _subscriber ?? SubscribeForMessageUpdates(UpdateCount);
+    }
+
+    public void Dispose() => _subscriber?.Dispose();
+
+    private void UpdateCount(string msg) => count = CounterService.count;
+
+    private IDisposable SubscribeForMessageUpdates(Action<string> updateCount) => MessageService
+        .Subscribe(action => action.AsStringMessage()
+            .Do(updateCount)
+            .Do(_ => StateHasChanged())
+            .Subscribe());
+}

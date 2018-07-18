@@ -1,0 +1,64 @@
+@page "/message"
+@using System.Reactive.Linq
+@implements IDisposable
+@inject IMessageService MessageService
+
+
+<div page="MessagePage">
+
+    <CounterComponent/>
+
+    <p>Subscriber 1 - Last message received: @Message1</p>
+    <p>Subscriber 2 - Last message received: @Message2</p>
+
+    <button class="btn btn-primary" onclick="@Unsubscribe1">Unsubscribe 1</button>
+    <button class="btn btn-primary" onclick="@Unsubscribe2">Unsubscribe 2</button>
+
+    <br/><br/>
+
+    <button class="btn btn-primary" onclick="@OnInit">Subscribe All</button>
+
+</div>
+
+@functions {
+    private IDisposable _subscriber1;
+    private IDisposable _subscriber2;
+
+    string Message1 { get; set; } = "None yet!";
+    string Message2 { get; set; } = "None yet!";
+
+    protected override void OnInit() {
+        _subscriber1 = _subscriber1 ?? SubscribeForMessageUpdates(UpdateMessage1);
+        _subscriber2 = _subscriber2 ?? SubscribeForMessageUpdates(UpdateMessage2);
+    }
+
+    public void Unsubscribe1() {
+        _subscriber1?.Dispose();
+        _subscriber1 = null;
+    }
+
+    public void Unsubscribe2() {
+        _subscriber2?.Dispose();
+        _subscriber2 = null;
+    }
+
+    public void Dispose() {
+        Console.WriteLine("Disposing Subscribers");
+        _subscriber2?.Dispose();
+        _subscriber2?.Dispose();
+    }
+
+    private void UpdateMessage1(string msg) => Message1 = msg;
+
+    private void UpdateMessage2(string msg) => Message2 = msg;
+
+    private void LogMessage(string msg) => Console.WriteLine($"StringMessage.Message = {msg}");
+
+    private IDisposable SubscribeForMessageUpdates(Action<string> updateMessage) => MessageService
+        .Subscribe(action => action.AsStringMessage()
+            .Do(updateMessage)
+            .Do(_ => StateHasChanged())
+            .Do(LogMessage)
+            .Subscribe());
+
+}

@@ -1,0 +1,6 @@
+.idea/
+.vs/
+bin/
+obj/
+wwwroot/css/App.css
+wwwroot/css/App.css.map
