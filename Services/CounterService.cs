@@ -3,12 +3,7 @@ public class CounterService : ICounterService {
 
   public int count { get; set; } = 0;
 
-  public void Increment() {
-    count++;
-    _messageService.SendMessage(new StringMessage($"CounterService:Increment:{count}"));
-  }
+  public void Increment() => _messageService.SendMessage(new StringMessage($"CounterService:Increment:{++count}"));
 
-  public CounterService(IMessageService messageService) {
-    _messageService = messageService;
-  }
+  public CounterService(IMessageService messageService) => _messageService = messageService;
 }

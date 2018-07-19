@@ -1,15 +1,13 @@
 using System;
-using System.Reactive.Linq;
+using static System.Reactive.Linq.Observable;
 
 static class ExtMethods {
-  public static IObservable<string> AsStringMessage(this ActionMessage me) =>
-    me is StringMessage sm ? Observable.Return(sm.Message) : Observable.Empty<string>();
+  public static IObservable<string> AsStringMessage(this ActionMessage me) => 
+    me is StringMessage sm ? Return(sm.Message) : Empty<string>();
 }
 
 public class StringMessage : ActionMessage {
   public readonly string Message;
 
-  public StringMessage(string msg) {
-    Message = msg;
-  }
+  public StringMessage(string msg) => Message = msg;
 }
