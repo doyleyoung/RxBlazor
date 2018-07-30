@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using static System.Reactive.Observer;
 
+[Injectable(typeof(IMessageService))]
 public class MessageService : IMessageService {
   private readonly Subject<ActionMessage> _subject = new Subject<ActionMessage>();
 

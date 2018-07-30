@@ -1,3 +1,5 @@
+
+[Injectable(typeof(ICounterService))]
 public class CounterService : ICounterService {
   private readonly IMessageService _messageService;
 
